@@ -65,7 +65,7 @@ def create_summary_stats(cases, deaths):
         'reporting_countries': reporting_countries
     }
 
-def save_numpy_data(cases, deaths, week_labels, filename='data/sample.npy'):
+def save_numpy_data(cases, deaths, week_labels, filename='../data/sample.npy'):
     """Save data in multiple formats in the numpy file"""
     
     # Create a structured array with all the data
@@ -90,8 +90,13 @@ def save_numpy_data(cases, deaths, week_labels, filename='data/sample.npy'):
 def main():
     """Main function to generate and save data"""
     
+    # Get the script directory and go up one level to project root
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(script_dir)
+    data_dir = os.path.join(project_root, 'data')
+    
     # Create data directory if it doesn't exist
-    os.makedirs('data', exist_ok=True)
+    os.makedirs(data_dir, exist_ok=True)
     
     # Generate the static data matching HTML
     dates, week_labels, cases, deaths = generate_static_covid_data()
@@ -101,6 +106,8 @@ def main():
     print("COVID-19 DASHBOARD DATA GENERATION")
     print("="*50)
     print("Generating data to match dashboard.html...")
+    print(f"Project root: {project_root}")
+    print(f"Data directory: {data_dir}")
     print()
     
     # Create DataFrame
@@ -112,17 +119,20 @@ def main():
     })
     
     # Save as CSV
-    df.to_csv('data/dataframe.csv', index=False)
-    print(f"✓ Saved main data to data/dataframe.csv")
+    csv_path = os.path.join(data_dir, 'dataframe.csv')
+    df.to_csv(csv_path, index=False)
+    print(f"✓ Saved main data to {csv_path}")
     
     # Create summary stats DataFrame
     stats_df = pd.DataFrame([stats])
-    stats_df.to_csv('data/dataframe2.csv', index=False)
-    print(f"✓ Saved summary stats to data/dataframe2.csv")
+    stats_csv_path = os.path.join(data_dir, 'dataframe2.csv')
+    stats_df.to_csv(stats_csv_path, index=False)
+    print(f"✓ Saved summary stats to {stats_csv_path}")
     
     # Save comprehensive numpy data
-    numpy_data = save_numpy_data(cases, deaths, week_labels)
-    print(f"✓ Saved comprehensive data to data/sample.npy")
+    numpy_path = os.path.join(data_dir, 'sample.npy')
+    numpy_data = save_numpy_data(cases, deaths, week_labels, numpy_path)
+    print(f"✓ Saved comprehensive data to {numpy_path}")
     
     print("\n" + "="*50)
     print("DATA SUMMARY")
